@@ -167,7 +167,7 @@ requests
 
 ## Related Work
 
-This project pairs with the [Stock Market ETL Pipeline] (https://github.com/Vishalkompalli/stock-market-performance-tracker)) - where the ETL project collects and structures quantitative stock data, this project enables qualitative reasoning over the same companies' annual disclosures. Two different ways of making financial data useful.
+This project pairs with the [Stock Market ETL Pipeline] (https://github.com/Vishalkompalli/stock-market-performance-tracker) - where the ETL project collects and structures quantitative stock data, this project enables qualitative reasoning over the same companies' annual disclosures. Two different ways of making financial data useful.
 
 ---
 
