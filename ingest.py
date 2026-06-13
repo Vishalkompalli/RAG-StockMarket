@@ -5,9 +5,13 @@ import pdfplumber
 import chromadb
 from sentence_transformers import SentenceTransformer
 import os
+import nltk #For semantic chunking strategy
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 # --- Step 1: Extract text from PDFs ---
-# PDF_PATH = "data/RIL-Integrated-Annual-Report-2024-25.pdf"  # replace with your actual filename
+# PDF_PATH = "data/RIL-Integrated-Annual-Report-2024-25.pdf"
 DATA_FOLDER = "data/"
 
 def extract_text(pdf_path):
@@ -23,15 +27,48 @@ def extract_text(pdf_path):
 # print(f"Extracted {len(raw_text)} characters")
 # print(raw_text[:500])  # preview first 500 chars
 
-# --- Step 2: Split text into chunks ---
-def chunk_text(text, chunk_size=400, overlap=50):
-    words = text.split()
+# --- Step 2: Split text into chunks --- #Sliding window chunking strategy
+# def chunk_text(text, chunk_size=400, overlap=50):
+#     words = text.split()
+#     chunks = []
+#     i = 0
+#     while i < len(words):
+#         chunk = " ".join(words[i:i+chunk_size])
+#         chunks.append(chunk)
+#         i += chunk_size - overlap
+#     return chunks
+def chunk_text(text, embedder, threshold=0.3, min_chunk_sentences=3):
+    # Split into sentences
+    sentences = nltk.sent_tokenize(text)
+    if len(sentences) < 2:
+        return [text]
+
+    # Embed all sentences
+    print(f"  Embedding {len(sentences)} sentences for semantic chunking...")
+    embeddings = embedder.encode(sentences, show_progress_bar=False)
+
+    # Compute similarity between consecutive sentences
+    similarities = []
+    for i in range(len(embeddings) - 1):
+        sim = cosine_similarity([embeddings[i]], [embeddings[i+1]])[0][0]
+        similarities.append(sim)
+
+    # Find breakpoints where similarity drops below threshold
     chunks = []
-    i = 0
-    while i < len(words):
-        chunk = " ".join(words[i:i+chunk_size])
-        chunks.append(chunk)
-        i += chunk_size - overlap
+    current_chunk = [sentences[0]]
+
+    for i, sim in enumerate(similarities):
+        if sim < threshold and len(current_chunk) >= min_chunk_sentences:
+            # Topic change detected — close current chunk, start new one
+            chunks.append(" ".join(current_chunk))
+            current_chunk = [sentences[i+1]]
+        else:
+            current_chunk.append(sentences[i+1])
+
+    # Add final chunk
+    if current_chunk:
+        chunks.append(" ".join(current_chunk))
+
     return chunks
 
 # chunks = chunk_text(raw_text)
@@ -61,7 +98,7 @@ for pdf_file in pdf_files:
     raw_text = extract_text(path)
     print(f"  Extracted {len(raw_text)} characters")
     
-    chunks = chunk_text(raw_text)
+    chunks = chunk_text(raw_text, embedder)
     print(f"  Chunked into {len(chunks)} pieces")
     
     print(f"  Embedding...")

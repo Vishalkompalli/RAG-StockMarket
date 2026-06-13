@@ -4,6 +4,7 @@ from langchain_community.llms import LlamaCpp
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+import os
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
@@ -20,7 +21,7 @@ llm = LlamaCpp(
     temperature=0.2,
     max_tokens=300,
     verbose=False,
-    n_ctx = 4096
+    n_ctx = os.cpu_count() 
 )
 
 prompt = PromptTemplate.from_template("""

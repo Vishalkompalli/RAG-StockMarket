@@ -43,9 +43,9 @@ def ask(question):
     return answer, chunks
 
 # --- Test ---
-if __name__ == "__main__":
-    question = "What are the key risks mentioned in the report?"
-    answer, chunks = ask(question)
-    print(f"Question: {question}")
-    print(f"\nAnswer:\n{answer}")
-    print(f"\n--- Retrieved chunks (first one) ---\n{chunks[0][:300]}")
+# if __name__ == "__main__":
+#     question = "What are the key risks mentioned in the report?"
+#     answer, chunks = ask(question)
+#     print(f"Question: {question}")
+#     print(f"\nAnswer:\n{answer}")
+#     print(f"\n--- Retrieved chunks (first one) ---\n{chunks[0][:300]}")
