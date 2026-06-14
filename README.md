@@ -63,8 +63,6 @@ Streamlit UI
 ```
 stock-rag/
 │
-├── data/                  # Annual report PDFs (not committed)
-├── chroma_store/          # Persistent ChromaDB vector store (not committed)
 ├── ingest.py              # Extract → chunk → embed → store pipeline
 ├── rag.py                 # Retrieve → prompt → generate pipeline
 ├── app.py                 # Streamlit UI
