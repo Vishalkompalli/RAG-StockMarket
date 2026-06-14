@@ -1,3 +1,4 @@
 chroma_store/
 chrome.sqlite3
 __pycache__
+data/
